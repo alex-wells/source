@@ -123,6 +123,7 @@ echo -e "${LGREEN}Now we have to visit menuconfig, just choose exit${NC}"
 echo -e "${LGREEN}and accept to saving changes.${NC}"
 sleep 8
 cp DefaultConfig .config
+make defconfig
 make -j$NUM_CORES menuconfig
 
 echo -e "${LGREEN}Now you can proceed with the compile with:${NC}"
