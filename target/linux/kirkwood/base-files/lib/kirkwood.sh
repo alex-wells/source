@@ -33,15 +33,19 @@ kirkwood_board_detect() {
 		name="ib62x0"
 		;;
 
+	"Cisco Systems ON100")
+		name="on100"
+		;;
+
 	"Cloud Engines Pogoplug E02")
 		name="pogo_e02"
 		;;
 
-	"Linksys EA3500")
+	"Linksys Audi (EA3500)")
 		name="linksys-audi"
 		;;
 
-	"Linksys E4200v2 / EA4500")
+	"Linksys Viper (E4200v2 / EA4500)")
 		name="linksys-viper"
 		;;
 

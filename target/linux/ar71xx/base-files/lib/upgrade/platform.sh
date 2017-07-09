@@ -111,7 +111,7 @@ tplink_pharos_check_image() {
 	# is accepted (loading the first 1.5M of a remote image for this check seems
 	# a bit extreme)
 	dd if="$1" bs=1 skip=1511432 count=1024 2>/dev/null | while read line; do
-		[ "$line" == "$model_string" ] && break
+		[ "$line" = "$model_string" ] && break
 	done || {
 		echo "Unsupported image (model not in support-list)"
 		return 1
@@ -204,7 +204,10 @@ platform_check_image() {
 	airgateway|\
 	airrouter|\
 	ap132|\
+	ap531b0|\
 	ap90q|\
+	archer-c25-v1|\
+	archer-c58-v1|\
 	archer-c59-v1|\
 	archer-c60-v1|\
 	bullet-m|\
@@ -216,6 +219,7 @@ platform_check_image() {
 	cf-e380ac-v2|\
 	cf-e520n|\
 	cf-e530n|\
+	cpe505n|\
 	cpe830|\
 	cpe870|\
 	dgl-5500-a1|\
@@ -234,6 +238,7 @@ platform_check_image() {
 	dr531|\
 	dragino2|\
 	ebr-2310-c1|\
+	ens202ext|\
 	epg5000|\
 	esr1750|\
 	esr900|\
@@ -255,6 +260,7 @@ platform_check_image() {
 	nanostation-m|\
 	nbg460n_550n_550nh|\
 	pqi-air-pen|\
+	r602n|\
 	rocket-m-ti|\
 	rocket-m-xw|\
 	rocket-m|\
@@ -267,6 +273,7 @@ platform_check_image() {
 	tew-712br|\
 	tew-732br|\
 	tew-823dru|\
+	tl-wr942n-v1|\
 	unifi-outdoor|\
 	unifiac-lite|\
 	unifiac-pro|\
@@ -280,6 +287,7 @@ platform_check_image() {
 	wpj342|\
 	wpj344|\
 	wpj531|\
+	wpj563|\
 	wrt400n|\
 	wrtnode2q|\
 	wzr-450hp2|\
@@ -394,6 +402,7 @@ platform_check_image() {
 	tl-mr3220|\
 	tl-mr3420-v2|\
 	tl-mr3420|\
+	tl-mr6400|\
 	tl-wa701nd-v2|\
 	tl-wa7210n-v2|\
 	tl-wa750re|\
@@ -403,6 +412,7 @@ platform_check_image() {
 	tl-wa830re-v2|\
 	tl-wa850re|\
 	tl-wa850re-v2|\
+	tl-wa855re-v1|\
 	tl-wa860re|\
 	tl-wa901nd-v2|\
 	tl-wa901nd-v3|\
@@ -422,11 +432,14 @@ platform_check_image() {
 	tl-wr703n|\
 	tl-wr710n|\
 	tl-wr720n-v3|\
+	tl-wr740n-v6|\
 	tl-wr741nd-v4|\
 	tl-wr741nd|\
 	tl-wr802n-v1|\
 	tl-wr802n-v2|\
 	tl-wr810n|\
+	tl-wr840n-v2|\
+	tl-wr840n-v3|\
 	tl-wr841n-v11|\
 	tl-wr841n-v1|\
 	tl-wr841n-v7|\
@@ -502,6 +515,7 @@ platform_check_image() {
 	rb-951g-2hnd|\
 	rb-951ui-2hnd|\
 	rb-2011l|\
+	rb-2011il|\
 	rb-2011uas|\
 	rb-2011uias|\
 	rb-2011uas-2hnd|\
@@ -512,8 +526,10 @@ platform_check_image() {
 		return $?
 		;;
 	c-60|\
+	hiveap-121|\
 	nbg6716|\
 	r6100|\
+	rambutan|\
 	wndr3700v4|\
 	wndr4300)
 		nand_do_platform_check $board $1
@@ -633,11 +649,16 @@ platform_check_image() {
 		return 0;
 		;;
 	# these boards use metadata images
+	fritz300e|\
 	rb-750-r2|\
 	rb-750up-r2|\
 	rb-941-2nd|\
 	rb-951ui-2nd|\
-	rb-mapl-2nd)
+	rb-952ui-5ac2nd|\
+	rb-962uigs-5hact2hnt|\
+	rb-lhg-5nd|\
+	rb-mapl-2nd|\
+	tl-wr902ac-v1)
 		return 0
 		;;
 	esac
@@ -651,8 +672,10 @@ platform_pre_upgrade() {
 
 	case "$board" in
 	c-60|\
+	hiveap-121|\
 	nbg6716|\
 	r6100|\
+	rambutan|\
 	rb-411|\
 	rb-411u|\
 	rb-433|\
@@ -673,6 +696,7 @@ platform_pre_upgrade() {
 	rb-912uag-5hpnd|\
 	rb-951g-2hnd|\
 	rb-951ui-2hnd|\
+	rb-2011il|\
 	rb-2011l|\
 	rb-2011uas|\
 	rb-2011uias|\
@@ -688,6 +712,9 @@ platform_pre_upgrade() {
 	rb-750up-r2|\
 	rb-941-2nd|\
 	rb-951ui-2nd|\
+	rb-952ui-5ac2nd|\
+	rb-962uigs-5hact2hnt|\
+	rb-lhg-5nd|\
 	rb-mapl-2nd)
 		# erase firmware if booted from initramfs
 		[ -z "$(rootfs_type)" ] && mtd erase firmware
@@ -737,7 +764,8 @@ platform_do_upgrade() {
 		platform_do_upgrade_allnet "0x9f080000" "$ARGV"
 		;;
 	cap4200ag|\
-	eap300v2)
+	eap300v2|\
+	ens202ext)
 		platform_do_upgrade_allnet "0xbf0a0000" "$ARGV"
 		;;
 	dir-825-b1|\

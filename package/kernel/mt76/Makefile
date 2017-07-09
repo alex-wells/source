@@ -1,16 +1,16 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=mt76
-PKG_RELEASE=2
+PKG_RELEASE=1
 
 PKG_LICENSE:=GPLv2
 PKG_LICENSE_FILES:=
 
 PKG_SOURCE_URL:=https://github.com/openwrt/mt76
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_DATE:=2017-02-03
-PKG_SOURCE_VERSION:=a5eaeb27d6a80c012ffc8b5bb5549983e446b4ef
-PKG_MIRROR_HASH:=c526586aba890c5645320145219bd5932e39cfc2ea540d7674c9a58ab9a4a36a
+PKG_SOURCE_DATE:=2017-07-04
+PKG_SOURCE_VERSION:=e90a81a5523e567efb1fe33bac677cfac644101f
+PKG_MIRROR_HASH:=6c40885a4f29f6842b6426568ae7d4b6c3e91f4a510c475e8fecaec03ae5f2f2
 
 PKG_MAINTAINER:=Felix Fietkau <nbd@nbd.name>
 PKG_BUILD_PARALLEL:=1
@@ -80,6 +80,10 @@ define Build/Compile
 		SUBDIRS="$(PKG_BUILD_DIR)" \
 		NOSTDINC_FLAGS="$(NOSTDINC_FLAGS)" \
 		modules
+endef
+
+define Package/kmod-mt76/install
+	true
 endef
 
 define KernelPackage/mt76x2/install

@@ -64,6 +64,9 @@ hostapd_common_add_device_config() {
 	config_add_string country
 	config_add_boolean country_ie doth
 	config_add_string require_mode
+	config_add_boolean legacy_rates
+
+	config_add_string acs_chan_bias
 
 	hostapd_add_log_config
 }
@@ -75,12 +78,15 @@ hostapd_prepare_device_config() {
 	local base="${config%%.conf}"
 	local base_cfg=
 
-	json_get_vars country country_ie beacon_int doth require_mode
+	json_get_vars country country_ie beacon_int:100 doth require_mode legacy_rates acs_chan_bias
 
 	hostapd_set_log_options base_cfg
 
 	set_default country_ie 1
 	set_default doth 1
+	set_default legacy_rates 1
+
+	[ "$hwmode" = "b" ] && legacy_rates=1
 
 	[ -n "$country" ] && {
 		append base_cfg "country_code=$country" "$N"
@@ -88,28 +94,38 @@ hostapd_prepare_device_config() {
 		[ "$country_ie" -gt 0 ] && append base_cfg "ieee80211d=1" "$N"
 		[ "$hwmode" = "a" -a "$doth" -gt 0 ] && append base_cfg "ieee80211h=1" "$N"
 	}
-	[ -n "$hwmode" ] && append base_cfg "hw_mode=$hwmode" "$N"
+
+	[ -n "$acs_chan_bias" ] && append base_cfg "acs_chan_bias=$acs_chan_bias" "$N"
 
 	local brlist= br
 	json_get_values basic_rate_list basic_rate
-	for br in $basic_rate_list; do
-		hostapd_add_rate brlist "$br"
-	done
+	local rlist= r
+	json_get_values rate_list supported_rates
+
+	[ -n "$hwmode" ] && append base_cfg "hw_mode=$hwmode" "$N"
+	[ "$legacy_rates" -eq 0 ] && set_default require_mode g
+
+	[ "$hwmode" = "g" ] && {
+		[ "$legacy_rates" -eq 0 ] && set_default rate_list "6000 9000 12000 18000 24000 36000 48000 54000"
+		[ -n "$require_mode" ] && set_default basic_rate_list "6000 12000 24000"
+	}
+
 	case "$require_mode" in
-		g) brlist="60 120 240" ;;
 		n) append base_cfg "require_ht=1" "$N";;
 		ac) append base_cfg "require_vht=1" "$N";;
 	esac
 
-	local rlist= r
-	json_get_values rate_list supported_rates
 	for r in $rate_list; do
 		hostapd_add_rate rlist "$r"
 	done
 
+	for br in $basic_rate_list; do
+		hostapd_add_rate brlist "$br"
+	done
+
 	[ -n "$rlist" ] && append base_cfg "supported_rates=$rlist" "$N"
 	[ -n "$brlist" ] && append base_cfg "basic_rates=$brlist" "$N"
-	[ -n "$beacon_int" ] && append base_cfg "beacon_int=$beacon_int" "$N"
+	append base_cfg "beacon_int=$beacon_int" "$N"
 
 	cat > "$config" <<EOF
 driver=$driver
@@ -139,6 +155,7 @@ hostapd_common_add_bss_config() {
 	config_add_string acct_server
 	config_add_string acct_secret
 	config_add_int acct_port
+	config_add_int acct_interval
 
 	config_add_string dae_client
 	config_add_string dae_secret
@@ -195,8 +212,8 @@ hostapd_set_bss_options() {
 		wps_pushbutton wps_label ext_registrar wps_pbc_in_m1 wps_ap_setup_locked \
 		wps_independent wps_device_type wps_device_name wps_manufacturer wps_pin \
 		macfilter ssid wmm uapsd hidden short_preamble rsn_preauth \
-		iapp_interface eapol_version acct_server acct_secret acct_port \
-		dynamic_vlan ieee80211w
+		iapp_interface eapol_version dynamic_vlan ieee80211w nasid \
+		acct_server acct_secret acct_port acct_interval
 
 	set_default isolate 0
 	set_default maxassoc 0
@@ -232,11 +249,14 @@ hostapd_set_bss_options() {
 		[ -n "$wpa_master_rekey" ] && append bss_conf "wpa_gmk_rekey=$wpa_master_rekey"  "$N"
 	}
 
+	[ -n "$nasid" ] && append bss_conf "nas_identifier=$nasid" "$N"
 	[ -n "$acct_server" ] && {
 		append bss_conf "acct_server_addr=$acct_server" "$N"
 		append bss_conf "acct_server_port=$acct_port" "$N"
 		[ -n "$acct_secret" ] && \
 			append bss_conf "acct_server_shared_secret=$acct_secret" "$N"
+		[ -n "$acct_interval" ] && \
+			append bss_conf "radius_acct_interim_interval=$acct_interval" "$N"
 	}
 
 	local vlan_possible=""
@@ -357,9 +377,8 @@ hostapd_set_bss_options() {
 	}
 
 	if [ "$wpa" -ge "1" ]; then
-		json_get_vars nasid ieee80211r
+		json_get_vars ieee80211r
 		set_default ieee80211r 0
-		[ -n "$nasid" ] && append bss_conf "nas_identifier=$nasid" "$N"
 
 		if [ "$ieee80211r" -gt "0" ]; then
 			json_get_vars mobility_domain r0_key_lifetime r1_key_holder \
@@ -696,9 +715,7 @@ wpa_supplicant_add_network() {
 			;;
 		esac
 	}
-	local beacon_int brates mrate
 	[ -n "$bssid" ] && append network_data "bssid=$bssid" "$N$T"
-	[ -n "$beacon_int" ] && append network_data "beacon_int=$beacon_int" "$N$T"
 
 	local bssid_blacklist bssid_whitelist
 	json_get_values bssid_blacklist bssid_blacklist
