@@ -77,7 +77,7 @@ then
 echo -e "${LGREEN}Merging from upstream failed, please, fix the problem and re-run the script.${NC}"
 exit 1
 fi
-grep "src-git onion https://github.com/OnionIoT/OpenWRT-Packages.git;omega2" feeds.conf.default > /dev/null
+grep "src-git onion https://github.com/OnionIoT/OpenWRT-Packages.git" feeds.conf.default > /dev/null
 if [ $? -eq 1 ]
 then
 echo "src-git onion https://github.com/OnionIoT/OpenWRT-Packages.git;omega2" >> feeds.conf.default
