@@ -80,7 +80,7 @@ fi
 grep "src-git onion https://github.com/OnionIoT/OpenWRT-Packages.git" feeds.conf.default > /dev/null
 if [ $? -eq 1 ]
 then
-echo "src-git onion https://github.com/OnionIoT/OpenWRT-Packages.git;omega2" >> feeds.conf.default
+echo "src-git onion https://github.com/OnionIoT/OpenWRT-Packages.git" >> feeds.conf.default
 fi
 
 scripts/feeds update -a
