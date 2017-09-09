@@ -4,11 +4,10 @@
 #
 
 . /lib/functions/uci-defaults.sh
-. /lib/ar71xx.sh
 
 board_config_update
 
-board=$(ar71xx_board_name)
+board=$(board_name)
 
 case "$board" in
 a40)
@@ -48,6 +47,10 @@ antminer-s3)
 antrouter-r1)
 	ucidef_set_led_wlan "wlan" "WLAN" "$board:green:wlan" "phy0tpt"
 	ucidef_set_led_default "btc" "BTC" "$board:green:btc" "0"
+	;;
+ap121f)
+	ucidef_set_led_netdev "lan" "LAN" "$board:green:lan" "eth0"
+	ucidef_set_led_wlan "wlan" "WLAN" "$board:green:wlan" "phy0tpt"
 	;;
 ap531b0|\
 sc1750|\
@@ -751,7 +754,7 @@ tl-wr802n-v2)
 	ucidef_set_led_wlan "wlan" "WLAN" "$board:green:system" "phy0tpt"
 	;;
 tl-wr902ac-v1)
-	ucidef_set_led_netdev "wan" "WAN" "$board:green:lan" "eth0"
+	ucidef_set_led_netdev "lan" "LAN" "$board:green:lan" "eth0"
 	ucidef_set_led_usbdev "usb" "USB" "$board:green:usb" "1-1"
 	ucidef_set_led_wlan "wlan2g" "WLAN2G" "$board:green:wlan2g" "phy1tpt"
 	;;
@@ -820,7 +823,8 @@ r6100)
 	;;
 wndr3700v4|\
 wndr4300)
-	ucidef_set_led_netdev "wan" "WAN (green)" "netgear:green:wan" "eth0.2"
+	ucidef_set_led_switch "wan-green" "WAN (green)" "netgear:green:wan" "switch0" "0x20" "0x08"
+	ucidef_set_led_switch "wan-amber" "WAN (amber)" "netgear:amber:wan" "switch0" "0x20" "0x06"
 	ucidef_set_led_usbdev "usb" "USB" "netgear:green:usb" "1-1"
 	ucidef_set_led_wlan "wlan2g" "WLAN2G" "netgear:green:wlan2g" "phy0tpt"
 	ucidef_set_led_wlan "wlan5g" "WLAN5G" "netgear:blue:wlan5g" "phy1tpt"

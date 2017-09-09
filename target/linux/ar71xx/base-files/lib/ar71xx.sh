@@ -416,6 +416,9 @@ ar71xx_board_detect() {
 	*"AP121-MINI")
 		name="ap121-mini"
 		;;
+	*"AP121F")
+		name="ap121f"
+		;;
 	*"AP132 reference board")
 		name="ap132"
 		;;
@@ -1341,13 +1344,4 @@ ar71xx_board_detect() {
 
 	echo "$AR71XX_BOARD_NAME" > /tmp/sysinfo/board_name
 	echo "$AR71XX_MODEL" > /tmp/sysinfo/model
-}
-
-ar71xx_board_name() {
-	local name
-
-	[ -f /tmp/sysinfo/board_name ] && name=$(cat /tmp/sysinfo/board_name)
-	[ -z "$name" ] && name="unknown"
-
-	echo "$name"
 }

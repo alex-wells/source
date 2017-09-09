@@ -76,20 +76,17 @@ ramips_board_detect() {
 	*"AWM002 EVB (8M)")
 		name="awm002-evb-8M"
 		;;
-	*"AWM003 EVB")
-		name="awm003-evb"
-		;;
 	*"BC2")
 		name="bc2"
-		;;
-	*"BR-6425")
-		name="br-6425"
 		;;
 	*"BR-6475nD")
 		name="br-6475nd"
 		;;
 	*"Broadway")
 		name="broadway"
+		;;
+	*"C108")
+		name="c108"
 		;;
 	*"C20i")
 		name="c20i"
@@ -187,7 +184,7 @@ ramips_board_detect() {
 	*"EX2700")
 		name="ex2700";
 		;;
-	*"EX3700")
+	*"EX3700/EX3800")
 		name="ex3700"
 		;;
 	*"F5D8235 v1")
@@ -207,6 +204,9 @@ ramips_board_detect() {
 		;;
 	*"FreeStation5")
 		name="freestation5"
+		;;
+	*"GB-PC1")
+		name="gb-pc1"
 		;;
 	*"GL-MT300A")
 		name="gl-mt300a"
@@ -262,6 +262,9 @@ ramips_board_detect() {
 	*"JHR-N926R")
 		name="jhr-n926r"
 		;;
+	*"K2P")
+		name="k2p"
+		;;
 	*"M3")
 		name="m3"
 		;;
@@ -284,7 +287,10 @@ ramips_board_detect() {
 		name="m2m"
 		;;
 	*"Mercury MAC1200R v2")
-		name="mac1200r-v2"
+		name="mac1200rv2"
+		;;
+	*"Mi Router 3G")
+		name="mir3g"
 		;;
 	*"MicroWRT")
 		name="microwrt"
@@ -424,6 +430,9 @@ ramips_board_detect() {
 	*"RB750Gr3")
 		name="rb750gr3"
 		;;
+	*"RE350 v1")
+		name="re350-v1"
+		;;
 	*"RE6500")
 		name="re6500"
 		;;
@@ -520,6 +529,9 @@ ramips_board_detect() {
 	*"VoCore2")
 		name="vocore2"
 		;;
+	*"VoCore2-Lite")
+		name="vocore2lite"
+		;;
 	*"VR500")
 		name="vr500"
 		;;
@@ -588,6 +600,9 @@ ramips_board_detect() {
 		;;
 	*"WLR-6000")
 		name="wlr-6000"
+		;;
+	*"WMDR-143N")
+		name="wmdr-143n"
 		;;
 	*"WMR-300")
 		name="wmr-300"
@@ -715,13 +730,4 @@ ramips_board_detect() {
 
 	echo "$RAMIPS_BOARD_NAME" > /tmp/sysinfo/board_name
 	echo "$RAMIPS_MODEL" > /tmp/sysinfo/model
-}
-
-ramips_board_name() {
-	local name
-
-	[ -f /tmp/sysinfo/board_name ] && name=$(cat /tmp/sysinfo/board_name)
-	[ -z "$name" ] && name="unknown"
-
-	echo "${name}"
 }

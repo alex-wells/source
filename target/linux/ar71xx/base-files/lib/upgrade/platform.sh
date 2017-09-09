@@ -7,7 +7,7 @@
 
 PART_NAME=firmware
 RAMFS_COPY_DATA=/lib/ar71xx.sh
-[ -x /usr/sbin/nandwrite ] && RAMFS_COPY_BIN=/usr/sbin/nandwrite
+RAMFS_COPY_BIN='nandwrite'
 
 CI_BLKSZ=65536
 CI_LDADR=0x80060000
@@ -184,7 +184,7 @@ alfa_check_image() {
 }
 
 platform_nand_board_name() {
-	local board=$(ar71xx_board_name)
+	local board=$(board_name)
 
 	case "$board" in
 	rb*) echo "routerboard";;
@@ -193,7 +193,7 @@ platform_nand_board_name() {
 }
 
 platform_check_image() {
-	local board=$(ar71xx_board_name)
+	local board=$(board_name)
 	local magic="$(get_magic_word "$1")"
 	local magic_long="$(get_magic_long "$1")"
 
@@ -203,6 +203,7 @@ platform_check_image() {
 	airgatewaypro|\
 	airgateway|\
 	airrouter|\
+	ap121f|\
 	ap132|\
 	ap531b0|\
 	ap90q|\
@@ -287,6 +288,7 @@ platform_check_image() {
 	wpj342|\
 	wpj344|\
 	wpj531|\
+	wpj558|\
 	wpj563|\
 	wrt400n|\
 	wrtnode2q|\
@@ -323,7 +325,6 @@ platform_check_image() {
 	hornet-ub|\
 	mr12|\
 	mr16|\
-	wpj558|\
 	zbt-we1526|\
 	zcn-1523h-2|\
 	zcn-1523h-5)
@@ -447,6 +448,7 @@ platform_check_image() {
 	tl-wr841n-v9|\
 	tl-wr842n-v2|\
 	tl-wr842n-v3|\
+	tl-wr902ac-v1|\
 	tl-wr941nd-v5|\
 	tl-wr941nd-v6|\
 	tl-wr940n-v4|\
@@ -657,8 +659,7 @@ platform_check_image() {
 	rb-952ui-5ac2nd|\
 	rb-962uigs-5hact2hnt|\
 	rb-lhg-5nd|\
-	rb-mapl-2nd|\
-	tl-wr902ac-v1)
+	rb-mapl-2nd)
 		return 0
 		;;
 	esac
@@ -668,7 +669,7 @@ platform_check_image() {
 }
 
 platform_pre_upgrade() {
-	local board=$(ar71xx_board_name)
+	local board=$(board_name)
 
 	case "$board" in
 	c-60|\
@@ -727,7 +728,7 @@ platform_pre_upgrade() {
 }
 
 platform_nand_pre_upgrade() {
-	local board=$(ar71xx_board_name)
+	local board=$(board_name)
 
 	case "$board" in
 	rb*)
@@ -742,7 +743,7 @@ platform_nand_pre_upgrade() {
 }
 
 platform_do_upgrade() {
-	local board=$(ar71xx_board_name)
+	local board=$(board_name)
 
 	case "$board" in
 	all0258n)

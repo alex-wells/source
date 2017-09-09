@@ -75,6 +75,19 @@ define Build/wrgg-pad-rootfs
 endef
 
 
+define Device/ap121f
+  DEVICE_TITLE := ALFA Network AP121F
+  DEVICE_PACKAGES := kmod-usb-core kmod-usb2 kmod-usb-storage -swconfig
+  BOARDNAME := AP121F
+  IMAGE_SIZE := 16064k
+  CONSOLE := ttyATH0,115200
+  MTDPARTS := spi0.0:192k(u-boot)ro,64k(u-boot-env),64k(art)ro,-(firmware)
+  SUPPORTED_DEVICES := ap121f
+  IMAGE/sysupgrade.bin = append-kernel | pad-to $$$$(BLOCKSIZE) | \
+	append-rootfs | pad-rootfs | append-metadata | check-size $$$$(IMAGE_SIZE)
+endef
+TARGET_DEVICES += ap121f
+
 define Device/ap531b0
   DEVICE_TITLE := Rockeetech AP531B0
   DEVICE_PACKAGES := kmod-usb-core kmod-usb2
@@ -286,21 +299,13 @@ define Device/mr12
   IMAGE/sysupgrade.bin := append-rootfs | pad-rootfs | pad-to $$$$(ROOTFS_SIZE) | append-kernel | check-size $$$$(IMAGE_SIZE)
   IMAGES := kernel.bin rootfs.bin sysupgrade.bin
 endef
-TARGET_DEVICES += mr12
 
 define Device/mr16
+  $(Device/mr12)
   DEVICE_TITLE := Meraki MR16
-  DEVICE_PACKAGES := kmod-spi-gpio
   BOARDNAME := MR16
-  ROOTFS_SIZE := 13440k
-  IMAGE_SIZE := 15680k
-  MTDPARTS := spi0.0:256k(u-boot)ro,256k(u-boot-env)ro,13440k(rootfs),2240k(kernel),64k(mac),128k(art)ro,15680k@0x80000(firmware)
-  IMAGE/kernel.bin := append-kernel
-  IMAGE/rootfs.bin := append-rootfs | pad-rootfs
-  IMAGE/sysupgrade.bin := append-rootfs | pad-rootfs | pad-to $$$$(ROOTFS_SIZE) | append-kernel | check-size $$$$(IMAGE_SIZE)
-  IMAGES := kernel.bin rootfs.bin sysupgrade.bin
 endef
-TARGET_DEVICES += mr16
+TARGET_DEVICES += mr12 mr16
 
 define Device/dr344
   DEVICE_TITLE := Wallys DR344
