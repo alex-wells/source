@@ -131,7 +131,7 @@ echo -e "${LGREEN}make -j$NUM_CORES${NC}"
 echo
 echo -e "${LGREEN}After compilation has finished, you'll find${NC}"
 echo -e "${LGREEN}the images in:${NC}"
-echo -e "${LGREEN}$SCRIPTDIR/bin/targets/ramips/mt7688/${NC}"
+echo -e "${LGREEN}$SCRIPTDIR/bin/targets/ramips/mt76x8/${NC}"
 echo
 echo -e "${LGREEN}In the future, use the update.sh-script to${NC}"
 echo -e "${LGREEN}merge updates from LEDE-upstream.${NC}"
